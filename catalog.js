@@ -162,104 +162,107 @@ function extractKeywords(text) {
 
 function scoreProduct(product, preferences) {
   let score = 0;
-  let reasons = [];
+  let reasonParts = [];
+  const regionLabels = { palestine: 'Palestine', lebanon: 'Lebanon', sudan: 'Sudan', iran: 'Iran', iraq: 'Iraq' };
+  const categoryLabels = { textiles: 'textiles & embroidery', ceramics: 'ceramics & home goods', food: 'food & spices', jewelry: 'jewelry & accessories', skincare: 'skincare & soap', art: 'art & paper goods' };
 
-  // 1. Region match (high weight)
-  if (preferences.regions.length > 0) {
+  // 1. Region match
+  if (preferences.regions.length > 0 && !preferences.regions.includes('no_pref')) {
     if (preferences.regions.includes(product.region)) {
       score += 30;
-      reasons.push('region');
-    } else if (!preferences.regions.includes('no_pref')) {
-      score -= 10;
+      reasonParts.push('You wanted to support ' + regionLabels[product.region] + ' — this comes directly from artisans there');
+    } else {
+      score -= 15;
     }
   }
 
-  // 2. Category match (high weight)
-  const categoryMap = {
-    'textiles': 'textiles',
-    'ceramics': 'ceramics',
-    'food': 'food',
-    'jewelry': 'jewelry',
-    'skincare': 'skincare',
-    'art': 'art'
-  };
+  // 2. Category match
   if (preferences.productTypes.length > 0) {
     if (preferences.productTypes.includes(product.category)) {
       score += 25;
-      reasons.push('category');
+      reasonParts.push('You said you love ' + categoryLabels[product.category]);
     }
   }
 
   // 3. Budget match
   if (preferences.budget) {
     const b = preferences.budget;
-    if (b === 'Under $25' && product.price <= 25) { score += 15; reasons.push('budget'); }
-    else if (b === '$25 – $50' && product.price >= 25 && product.price <= 50) { score += 15; reasons.push('budget'); }
-    else if (b === '$50 – $100' && product.price >= 50 && product.price <= 100) { score += 15; reasons.push('budget'); }
-    else if (b === '$100+' && product.price >= 100) { score += 15; reasons.push('budget'); }
-    else if (b === 'No preference') { score += 5; }
+    let inBudget = false;
+    if (b === 'Under $25' && product.price <= 25) inBudget = true;
+    else if (b === '$25 \u2013 $50' && product.price >= 25 && product.price <= 50) inBudget = true;
+    else if (b === '$50 \u2013 $100' && product.price >= 50 && product.price <= 100) inBudget = true;
+    else if (b === '$100+' && product.price >= 100) inBudget = true;
+    else if (b === 'No preference') inBudget = true;
+    if (inBudget) {
+      score += 15;
+      if (b !== 'No preference') reasonParts.push('Fits your ' + b + ' budget');
+    }
   }
 
-  // 4. Keyword matching from free text (highest weight - this is the "LLM" part)
+  // 4. Keyword matching from free text
+  let matchedWords = [];
   if (preferences.keywords) {
     const { words, phrases } = preferences.keywords;
     let keywordHits = 0;
 
-    // Check phrases first (worth more)
     for (const phrase of phrases) {
       const phraseWords = phrase.split(' ');
       if (phraseWords.every(pw => product.keywords.some(kw => kw.includes(pw)))) {
         keywordHits += 3;
+        matchedWords.push(phrase);
       }
     }
 
-    // Check individual words
     for (const word of words) {
+      let hit = false;
       for (const kw of product.keywords) {
-        if (kw.includes(word) || word.includes(kw)) {
-          keywordHits++;
-          break;
-        }
+        if (kw.includes(word) || word.includes(kw)) { hit = true; break; }
       }
-      // Also check product name and description
-      if (product.name.toLowerCase().includes(word)) keywordHits++;
-      if (product.desc.toLowerCase().includes(word)) keywordHits += 0.5;
+      if (!hit && product.name.toLowerCase().includes(word)) hit = true;
+      if (!hit && product.desc.toLowerCase().includes(word)) hit = true;
+      if (hit) { keywordHits++; matchedWords.push(word); }
     }
 
     if (keywordHits > 0) {
-      score += Math.min(keywordHits * 4, 40);
-      reasons.push('preferences');
+      score += Math.min(keywordHits * 5, 45);
+      const unique = [...new Set(matchedWords)].slice(0, 4);
+      if (unique.length > 0) {
+        reasonParts.push('You mentioned "' + unique.join('", "') + '" — this matches');
+      }
     }
   }
 
-  // 5. Avoid keywords (negative weight)
+  // 5. Avoid keywords
   if (preferences.avoidKeywords && preferences.avoidKeywords.length > 0) {
     for (const avoid of preferences.avoidKeywords) {
       if (product.keywords.some(kw => kw.includes(avoid)) ||
           product.name.toLowerCase().includes(avoid) ||
           product.desc.toLowerCase().includes(avoid)) {
-        score -= 20;
+        score -= 30;
         break;
       }
     }
   }
 
-  // 6. Gift context bonus
+  // 6. Gift context
   if (preferences.isGift === 'yes') {
     if (product.keywords.includes('gift') || product.keywords.includes('set') || product.keywords.includes('special')) {
-      score += 8;
-      reasons.push('gift-friendly');
+      score += 10;
+      reasonParts.push('Great as a gift');
     }
   }
 
   // 7. Wearable preference
-  if (preferences.clothingSize === 'Skip — no wearables please') {
+  if (preferences.clothingSize === 'Skip \u2014 no wearables please') {
     if (product.keywords.includes('wearable') || product.category === 'textiles') {
-      score -= 15;
+      score -= 20;
     }
   }
 
-  return { product, score, reasons: [...new Set(reasons)] };
+  // Build the "why" sentence
+  const why = reasonParts.length > 0 ? reasonParts.join('. ') + '.' : '';
+
+  return { product, score, why };
 }
 
 function matchProducts(preferences) {
@@ -332,7 +335,7 @@ function buildMatchResult(data) {
   };
 
   const results = matchProducts(preferences);
-  const topMatches = results.filter(r => r.score > 0).slice(0, 8);
+  const topMatches = results.filter(r => r.score > 0).slice(0, 4);
   const prefSummary = summarizePreferences(data);
 
   return { topMatches, prefSummary, totalScored: results.length };
