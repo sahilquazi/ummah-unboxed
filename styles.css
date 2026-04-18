@@ -93,6 +93,7 @@ p { font-size: 1rem; color: var(--warm-black); }
   gap: 10px;
 }
 .nav__logo span.star { color: var(--amber); font-size: 1rem; }
+.nav__logo-img { height: 30px; vertical-align: middle; margin-right: 6px; }
 .nav__links {
   display: flex;
   align-items: center;
