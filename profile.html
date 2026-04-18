@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Build Your Profile — Ummah Unboxed</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="catalog.js"></script>
   <style>
     .progress-bar {
       height: 3px; background: var(--border); position: sticky; top: 64px; z-index: 49;
@@ -77,6 +78,49 @@
     .gift-fields { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
     .gift-fields.visible { display: block; }
     textarea#custom-prefs { min-height: 160px; }
+    .match-pref-summary {
+      background: rgba(247,240,226,0.08); border: 1px solid rgba(247,240,226,0.15);
+      padding: 24px 28px; margin-bottom: 32px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;
+    }
+    .match-pref-summary h4 {
+      color: var(--wheat); font-family: 'DM Sans', sans-serif; font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; margin-bottom: 12px;
+    }
+    .match-pref-summary li {
+      color: rgba(247,240,226,0.7); font-size: 0.88rem; margin-bottom: 8px; line-height: 1.5;
+      padding-left: 16px; position: relative; list-style: none;
+    }
+    .match-pref-summary li::before {
+      content: ''; position: absolute; left: 0; top: 8px;
+      width: 6px; height: 6px; background: var(--amber); border-radius: 50%;
+    }
+    .match-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      max-width: 700px; margin: 0 auto; text-align: left;
+    }
+    .match-card {
+      background: rgba(247,240,226,0.06); border: 1px solid rgba(247,240,226,0.12);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .match-card__img { height: 140px; overflow: hidden; }
+    .match-card__img img { width: 100%; height: 100%; object-fit: cover; }
+    .match-card__body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+    .match-card__brand { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); font-weight: 500; margin-bottom: 4px; }
+    .match-card__name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 600; color: var(--cream); margin-bottom: 6px; line-height: 1.25; }
+    .match-card__desc { font-size: 0.78rem; color: rgba(247,240,226,0.55); line-height: 1.5; flex: 1; margin-bottom: 10px; }
+    .match-card__footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(247,240,226,0.08); padding-top: 10px; margin-top: auto; }
+    .match-card__price { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.2rem; font-weight: 600; color: var(--wheat); }
+    .match-card__link { font-size: 0.72rem; color: var(--amber); text-decoration: underline; }
+    .match-score { display: inline-block; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 6px; background: var(--amber); color: #fff; font-weight: 600; margin-bottom: 6px; }
+    .analyzing-overlay {
+      position: fixed; inset: 0; background: rgba(30,24,18,0.92); z-index: 999;
+      display: flex; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .analyzing-overlay h3 { color: var(--cream); margin-bottom: 8px; font-size: 1.5rem; }
+    .analyzing-overlay p { color: rgba(247,240,226,0.6); font-size: 0.9rem; margin-bottom: 24px; }
+    .analyzing-bar { width: 240px; height: 3px; background: rgba(247,240,226,0.15); overflow: hidden; }
+    .analyzing-bar__fill { height: 100%; background: var(--amber); width: 0%; transition: width 0.3s; }
+    @media (max-width: 600px) { .match-grid { grid-template-columns: 1fr; } }
     select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6A52' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   </style>
 </head>
@@ -351,62 +395,37 @@
   </form>
 
   <!-- Match Result (shown after submit) -->
-  <div class="match-result" id="match-result">
+  <div class="match-result" id="match-result" style="display:none;">
     <div class="match-result__icon">&#9789;</div>
-    <h2>You've been matched.</h2>
-    <p>Based on your profile, we've connected you with this month's featured artisans. Your first box ships within 5 business days.</p>
-    <div class="match-result__artisan">
-      <span class="match-result__artisan-name">Ibrahim Nasser</span>
-      <span class="match-result__artisan-loc">Woodworker &amp; Calligrapher &middot; Bethlehem, Palestine</span>
+    <h2>We analyzed your preferences.</h2>
+    <p id="match-count-text" style="margin-bottom: 24px;">Scoring complete.</p>
+
+    <!-- What they said -->
+    <div class="match-pref-summary" id="pref-summary">
+      <h4>You said you wanted</h4>
+      <ul id="pref-list"></ul>
     </div>
-    <p>A confirmation email is on its way. Your box includes a kheffiyah, Palestinian bracelet, wooden calligraphy art, a gold Allah coin, and a free solidarity sticker — plus marketplace cards linking to all artisan storefronts.</p>
-    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px;">
-      <a href="april-box.html" class="btn btn--amber">Preview Your Box</a>
-      <a href="marketplace.html" class="btn btn--outline-light">Browse the Marketplace</a>
+
+    <!-- Matched products -->
+    <h3 style="color: var(--wheat); margin-bottom: 6px; font-size: 1.3rem;">These marketplace items match your profile:</h3>
+    <p style="color: rgba(247,240,226,0.5); font-size: 0.85rem; margin-bottom: 24px;">Ranked by how closely they fit what you described.</p>
+    <div class="match-grid" id="match-grid"></div>
+
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 32px;">
+      <a href="april-box.html" class="btn btn--amber">Preview April's Box</a>
+      <a href="marketplace.html" class="btn btn--outline-light">Browse Full Marketplace</a>
     </div>
-    <div style="margin-top: 24px;">
+    <div style="margin-top: 20px;">
       <button type="button" class="btn btn--outline-light btn--sm" id="edit-profile-btn">Edit My Profile</button>
+      <button type="button" class="btn btn--outline-light btn--sm" id="reset-profile-btn" style="margin-left: 8px;">Reset Profile</button>
     </div>
   </div>
 
-  <!-- Returning User Dashboard (shown when localStorage has profile) -->
-  <div id="user-dashboard" style="display: none;">
-    <div style="background: var(--deep-green); color: var(--cream); padding: 48px; text-align: center; margin-bottom: 40px;">
-      <div style="font-size: 2rem; margin-bottom: 12px;">&#9789;</div>
-      <h2 style="color: var(--cream); margin-bottom: 8px;">Welcome back, <span id="dash-name"></span>.</h2>
-      <p style="color: rgba(247,240,226,0.72); max-width: 480px; margin: 0 auto 20px;">Your profile is saved and your subscription is active. Here's what we have on file for you.</p>
-    </div>
-    <div style="max-width: 600px; margin: 0 auto;">
-      <div style="border: 1px solid var(--border); background: var(--cream); padding: 28px 32px; margin-bottom: 20px;">
-        <span class="label" style="margin-bottom: 10px; display: block;">Your Profile</span>
-        <div id="dash-details" style="font-size: 0.9rem; color: var(--muted); line-height: 1.8;"></div>
-      </div>
-      <div style="border: 1px solid var(--border); background: var(--cream); padding: 28px 32px; margin-bottom: 20px;">
-        <span class="label" style="margin-bottom: 10px; display: block;">Your Match &mdash; April 2026</span>
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <img src="wooden-art.jpeg" alt="Ibrahim Nasser" style="width: 64px; height: 64px; object-fit: cover; border: 1px solid var(--border);">
-          <div>
-            <strong style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.2rem;">Ibrahim Nasser</strong><br>
-            <span style="font-size: 0.82rem; color: var(--muted);">Woodworker &amp; Calligrapher &middot; Bethlehem, Palestine</span>
-          </div>
-        </div>
-      </div>
-      <div style="border: 1px solid var(--border); background: var(--cream); padding: 28px 32px; margin-bottom: 20px;">
-        <span class="label" style="margin-bottom: 10px; display: block;">Your April Box</span>
-        <ul style="font-size: 0.88rem; color: var(--muted); line-height: 2; padding-left: 18px; list-style: disc;">
-          <li>Traditional Palestinian Kheffiyah</li>
-          <li>Handmade Palestinian Bracelet</li>
-          <li>Wooden Arabic Calligraphy Artwork</li>
-          <li>Gold Allah Coin</li>
-          <li>FREE: Palestinian Solidarity Sticker</li>
-        </ul>
-        <a href="april-box.html" class="btn btn--primary" style="margin-top: 16px;">View Full Box Details</a>
-      </div>
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px;">
-        <a href="marketplace.html" class="btn btn--outline">Browse Marketplace</a>
-        <button type="button" class="btn btn--outline btn--sm" id="reset-profile-btn" style="color: var(--red-accent); border-color: var(--red-accent);">Reset Profile</button>
-      </div>
-    </div>
+  <!-- Analyzing overlay -->
+  <div class="analyzing-overlay" id="analyzing-overlay" style="display:none;">
+    <h3>Analyzing your preferences...</h3>
+    <p>Matching you against <span id="catalog-size">105</span> artisan products</p>
+    <div class="analyzing-bar"><div class="analyzing-bar__fill" id="analyzing-fill"></div></div>
   </div>
 
 </div>
@@ -458,6 +477,9 @@
   const totalSteps = steps.length;
   let currentStep = 0;
 
+  // Set catalog size in overlay
+  document.getElementById('catalog-size').textContent = CATALOG.length;
+
   function showStep(index) {
     steps.forEach((s, i) => s.classList.toggle('active', i === index));
     progressFill.style.width = ((index + 1) / totalSteps * 100) + '%';
@@ -469,7 +491,6 @@
       if (currentStep < totalSteps - 1) { currentStep++; showStep(currentStep); }
     });
   });
-
   document.querySelectorAll('.prev-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (currentStep > 0) { currentStep--; showStep(currentStep); }
@@ -484,7 +505,6 @@
       btn.classList.add('selected');
     });
   });
-
   // Budget buttons
   document.querySelectorAll('.budget-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -492,112 +512,150 @@
       btn.classList.add('selected');
     });
   });
-
   // Gift toggle
   document.querySelectorAll('input[name="is_gift"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      const giftFields = document.getElementById('gift-fields');
-      if (radio.value === 'yes' && radio.checked) {
-        giftFields.classList.add('visible');
-      } else {
-        giftFields.classList.remove('visible');
-      }
+      const gf = document.getElementById('gift-fields');
+      if (radio.value === 'yes' && radio.checked) gf.classList.add('visible');
+      else gf.classList.remove('visible');
     });
   });
 
-  // Collect all form data
+  // Collect form data
   function collectFormData() {
-    const data = {};
-    data.firstName = document.getElementById('first-name').value;
-    data.lastName = document.getElementById('last-name').value;
-    data.email = document.getElementById('email').value;
-    data.zip = document.getElementById('zip').value;
-
-    data.productTypes = [];
-    document.querySelectorAll('input[name="product_type"]:checked').forEach(cb => data.productTypes.push(cb.value));
-
-    data.idealBox = document.getElementById('custom-prefs').value;
-    data.avoid = document.getElementById('avoid').value;
-
-    const selectedClothing = document.querySelector('.size-btn[data-group="clothing"].selected');
-    data.clothingSize = selectedClothing ? selectedClothing.textContent : '';
-    const selectedScarf = document.querySelector('.size-btn[data-group="scarf"].selected');
-    data.scarfSize = selectedScarf ? selectedScarf.textContent : '';
-    data.sizeNotes = document.getElementById('notes-size').value;
-
-    data.isGift = document.querySelector('input[name="is_gift"]:checked').value;
-    data.recipientName = document.getElementById('recipient-name').value;
-    data.giftOccasion = document.getElementById('gift-occasion').value;
-    data.giftPrefs = document.getElementById('gift-prefs').value;
-
-    data.regions = [];
-    document.querySelectorAll('input[name="region"]:checked').forEach(cb => data.regions.push(cb.value));
-
-    const selectedBudget = document.querySelector('.budget-btn.selected');
-    data.budget = selectedBudget ? selectedBudget.textContent : '';
-    data.extraNotes = document.getElementById('extra-notes').value;
-
-    data.savedAt = new Date().toISOString();
-    data.matchedArtisan = 'Ibrahim Nasser';
-    data.matchedBox = 'April 2026 — From Palestine, With Soul';
-
-    return data;
+    const d = {};
+    d.firstName = document.getElementById('first-name').value;
+    d.lastName = document.getElementById('last-name').value;
+    d.email = document.getElementById('email').value;
+    d.zip = document.getElementById('zip').value;
+    d.productTypes = [];
+    document.querySelectorAll('input[name="product_type"]:checked').forEach(cb => d.productTypes.push(cb.value));
+    d.idealBox = document.getElementById('custom-prefs').value;
+    d.avoid = document.getElementById('avoid').value;
+    const sc = document.querySelector('.size-btn[data-group="clothing"].selected');
+    d.clothingSize = sc ? sc.textContent.trim() : '';
+    const ss = document.querySelector('.size-btn[data-group="scarf"].selected');
+    d.scarfSize = ss ? ss.textContent.trim() : '';
+    d.sizeNotes = document.getElementById('notes-size').value;
+    d.isGift = document.querySelector('input[name="is_gift"]:checked').value;
+    d.recipientName = document.getElementById('recipient-name').value;
+    d.giftOccasion = document.getElementById('gift-occasion').value;
+    d.giftPrefs = document.getElementById('gift-prefs').value;
+    d.regions = [];
+    document.querySelectorAll('input[name="region"]:checked').forEach(cb => d.regions.push(cb.value));
+    const sb = document.querySelector('.budget-btn.selected');
+    d.budget = sb ? sb.textContent.trim() : '';
+    d.extraNotes = document.getElementById('extra-notes').value;
+    d.savedAt = new Date().toISOString();
+    return d;
   }
 
-  // Show the match result
-  function showMatchResult() {
+  // Render match results
+  function renderMatches(data) {
+    const { topMatches, prefSummary } = buildMatchResult(data);
+
+    // Preference summary
+    const prefList = document.getElementById('pref-list');
+    prefList.innerHTML = '';
+    if (prefSummary.length === 0) {
+      prefList.innerHTML = '<li>You left your preferences open — showing our best general picks.</li>';
+    } else {
+      for (const line of prefSummary) {
+        const li = document.createElement('li');
+        li.textContent = line;
+        prefList.appendChild(li);
+      }
+    }
+
+    // Count text
+    document.getElementById('match-count-text').textContent =
+      'We scored ' + CATALOG.length + ' products against your profile and found ' + topMatches.length + ' strong matches.';
+
+    // Product grid
+    const grid = document.getElementById('match-grid');
+    grid.innerHTML = '';
+    const regionLabels = { palestine: 'Palestine', lebanon: 'Lebanon', sudan: 'Sudan', iran: 'Iran', iraq: 'Iraq' };
+
+    for (const m of topMatches) {
+      const p = m.product;
+      const card = document.createElement('div');
+      card.className = 'match-card';
+      const matchPct = Math.min(Math.round((m.score / 80) * 100), 99);
+      card.innerHTML =
+        '<div class="match-card__img"><img src="' + p.img + '" alt="' + p.name + '"></div>' +
+        '<div class="match-card__body">' +
+          '<span class="match-score">' + matchPct + '% match</span>' +
+          '<span class="match-card__brand">' + p.brand + ' &middot; ' + (regionLabels[p.region] || p.region) + '</span>' +
+          '<div class="match-card__name">' + p.name + '</div>' +
+          '<div class="match-card__desc">' + p.desc + '</div>' +
+          '<div class="match-card__footer">' +
+            '<span class="match-card__price">$' + p.price + '</span>' +
+            '<a href="' + p.link + '" target="_blank" class="match-card__link">Visit Store &rarr;</a>' +
+          '</div>' +
+        '</div>';
+      grid.appendChild(card);
+    }
+
+    // Show result
     document.getElementById('profile-form').style.display = 'none';
     document.querySelector('.progress-bar').style.display = 'none';
-    const result = document.getElementById('match-result');
-    result.style.display = 'block';
-    window.scrollTo({ top: result.offsetTop - 100, behavior: 'smooth' });
-  }
+    document.getElementById('match-result').style.display = 'block';
 
-  // Show the returning-user dashboard
-  function showDashboard(data) {
-    document.getElementById('profile-form').style.display = 'none';
-    document.querySelector('.progress-bar').style.display = 'none';
-    const dash = document.getElementById('user-dashboard');
-    dash.style.display = 'block';
-
-    document.getElementById('dash-name').textContent = data.firstName || 'subscriber';
-
-    let details = '';
-    if (data.email) details += '<strong>Email:</strong> ' + data.email + '<br>';
-    if (data.zip) details += '<strong>ZIP:</strong> ' + data.zip + '<br>';
-    if (data.productTypes && data.productTypes.length) details += '<strong>Interests:</strong> ' + data.productTypes.join(', ') + '<br>';
-    if (data.regions && data.regions.length) details += '<strong>Regions:</strong> ' + data.regions.join(', ') + '<br>';
-    if (data.clothingSize) details += '<strong>Clothing size:</strong> ' + data.clothingSize + '<br>';
-    if (data.budget) details += '<strong>Budget:</strong> ' + data.budget + '<br>';
-    if (data.isGift === 'yes') details += '<strong>Gift for:</strong> ' + (data.recipientName || 'someone special') + '<br>';
-    if (data.idealBox) details += '<strong>Preferences:</strong> ' + data.idealBox.substring(0, 120) + (data.idealBox.length > 120 ? '...' : '') + '<br>';
-
-    document.getElementById('dash-details').innerHTML = details || 'No details saved.';
-
+    // Update header
     const header = document.querySelector('.profile-header h1');
-    header.textContent = 'Welcome back, ' + (data.firstName || 'subscriber') + '.';
+    header.textContent = data.firstName ? 'Here are your matches, ' + data.firstName + '.' : 'Here are your matches.';
     const headerP = document.querySelector('.profile-header p');
-    headerP.textContent = 'Your profile is saved. Your April box is on its way.';
+    headerP.textContent = 'Based on everything you told us, these items from our marketplace are the best fit for you.';
+
+    window.scrollTo({ top: document.getElementById('match-result').offsetTop - 100, behavior: 'smooth' });
   }
 
-  // Form submit — save to localStorage & show result
+  // Animated analyzing overlay
+  function showAnalyzing(callback) {
+    const overlay = document.getElementById('analyzing-overlay');
+    const fill = document.getElementById('analyzing-fill');
+    overlay.style.display = 'flex';
+    fill.style.width = '0%';
+
+    const steps = [
+      { pct: 15, delay: 200 },
+      { pct: 35, delay: 500 },
+      { pct: 60, delay: 900 },
+      { pct: 85, delay: 1400 },
+      { pct: 100, delay: 1800 }
+    ];
+    for (const s of steps) {
+      setTimeout(() => { fill.style.width = s.pct + '%'; }, s.delay);
+    }
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      callback();
+    }, 2200);
+  }
+
+  // Form submit
   document.getElementById('profile-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const data = collectFormData();
     localStorage.setItem('ummah_profile', JSON.stringify(data));
-    showMatchResult();
+
+    showAnalyzing(() => renderMatches(data));
   });
 
-  // Edit profile button — go back to form
+  // Edit profile
   document.getElementById('edit-profile-btn').addEventListener('click', () => {
     document.getElementById('match-result').style.display = 'none';
     document.getElementById('profile-form').style.display = 'block';
     document.querySelector('.progress-bar').style.display = 'block';
+    const header = document.querySelector('.profile-header h1');
+    header.textContent = 'Tell us what you care about.';
+    const headerP = document.querySelector('.profile-header p');
+    headerP.textContent = 'The more specific you are, the better we can match you with an artisan whose work actually fits. There are no wrong answers here.';
     currentStep = 0;
     showStep(0);
   });
 
-  // Reset profile button — clear localStorage & reload
+  // Reset profile
   document.getElementById('reset-profile-btn').addEventListener('click', () => {
     if (confirm('This will clear your saved profile. Are you sure?')) {
       localStorage.removeItem('ummah_profile');
@@ -605,13 +663,13 @@
     }
   });
 
-  // On page load — check for saved profile
+  // On load — check for saved profile
   (function() {
     const saved = localStorage.getItem('ummah_profile');
     if (saved) {
       try {
         const data = JSON.parse(saved);
-        showDashboard(data);
+        renderMatches(data);
       } catch(e) {
         localStorage.removeItem('ummah_profile');
       }
