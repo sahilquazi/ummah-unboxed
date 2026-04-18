@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Your Profile — Ummah Unboxed</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .progress-bar {
+      height: 3px; background: var(--border); position: sticky; top: 64px; z-index: 49;
+    }
+    .progress-bar__fill {
+      height: 100%; background: var(--amber);
+      width: 0%; transition: width 0.4s ease;
+    }
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+    .form-step__header { margin-bottom: 32px; }
+    .form-step__header h3 { font-size: clamp(1.5rem, 3vw, 2.2rem); margin-bottom: 8px; }
+    .form-step__header p  { color: var(--muted); font-size: 0.95rem; }
+    .step-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 36px; margin-top: 40px; border-top: 1px solid var(--border);
+    }
+    .step-counter { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; }
+    .step-nav__btns { display: flex; gap: 12px; }
+    .gift-toggle {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1.5px solid var(--border);
+    }
+    .gift-toggle label {
+      padding: 16px 20px; text-align: center; cursor: pointer; font-size: 0.9rem;
+      color: var(--muted); border-right: 1px solid var(--border); transition: background 0.15s;
+      font-weight: 400; margin: 0;
+    }
+    .gift-toggle label:last-child { border-right: none; }
+    .gift-toggle input[type="radio"] { display: none; }
+    .gift-toggle input[type="radio"]:checked + label {
+      background: var(--deep-green); color: var(--cream); font-weight: 500;
+    }
+    .budget-options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .budget-btn {
+      padding: 10px 20px; border: 1.5px solid var(--border); background: transparent;
+      font-family: 'DM Sans', sans-serif; font-size: 0.875rem; cursor: pointer;
+      color: var(--warm-black); transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .budget-btn:hover, .budget-btn.selected {
+      background: var(--deep-green); border-color: var(--deep-green); color: var(--cream);
+    }
+    .region-checkboxes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .region-check-item {
+      display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+      border: 1.5px solid var(--border); cursor: pointer; transition: border-color 0.12s;
+    }
+    .region-check-item:has(input:checked) {
+      border-color: var(--deep-green); background: rgba(27,61,47,0.04);
+    }
+    .region-check-item input { accent-color: var(--deep-green); }
+    .region-check-item span { font-size: 0.9rem; }
+    .match-result {
+      display: none;
+      background: var(--deep-green); color: var(--cream); padding: 56px;
+      text-align: center;
+    }
+    .match-result.visible { display: block; }
+    .match-result__icon { font-size: 2.4rem; margin-bottom: 16px; }
+    .match-result h2 { color: var(--cream); margin-bottom: 12px; }
+    .match-result p  { color: rgba(247,240,226,0.72); max-width: 480px; margin: 0 auto 28px; }
+    .match-result__artisan {
+      display: inline-block; background: rgba(247,240,226,0.08);
+      border: 1px solid rgba(247,240,226,0.2); padding: 24px 36px; margin-bottom: 28px;
+    }
+    .match-result__artisan-name {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem;
+      font-weight: 600; color: var(--wheat); display: block; margin-bottom: 4px;
+    }
+    .match-result__artisan-loc { font-size: 0.8rem; color: rgba(247,240,226,0.55); }
+    .gift-fields { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .gift-fields.visible { display: block; }
+    textarea#custom-prefs { min-height: 160px; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6A52' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  </style>
+</head>
+<body>
+
+<!-- Announcement Bar -->
+<div class="announce-bar">
+  April box available now — <a href="april-box.html">From Palestine, With Soul — $65 &rarr;</a>
+</div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo"><span class="star">☽</span> Ummah Unboxed</a>
+    <div class="nav__links">
+      <a href="index.html">Home</a>
+      <a href="april-box.html">April Box</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="index.html#how-it-works">How It Works</a>
+      <a href="profile.html" class="nav__cta active">Build Your Profile</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Progress Bar -->
+<div class="progress-bar"><div class="progress-bar__fill" id="progress-fill"></div></div>
+
+<!-- Page Header -->
+<div class="profile-header">
+  <div class="container">
+    <span class="label" style="color: var(--wheat); opacity: 0.6; margin-bottom: 10px; display: block;">Step-by-step · Takes about 3 minutes</span>
+    <h1>Tell us what you care about.</h1>
+    <p>The more specific you are, the better we can match you with an artisan whose work actually fits. There are no wrong answers here.</p>
+  </div>
+</div>
+
+<!-- Form -->
+<div class="profile-form-wrap">
+  <form id="profile-form">
+
+    <!-- Step 1: Name + Email -->
+    <div class="form-step active" data-step="1">
+      <div class="form-step__header">
+        <div class="form-step__num">Step 1 of 6</div>
+        <h3>Start with the basics.</h3>
+        <p>We'll send your match confirmation and shipping updates here.</p>
+      </div>
+      <div class="input-row">
+        <div class="form-field">
+          <label for="first-name">First name</label>
+          <input type="text" id="first-name" placeholder="Fatima" autocomplete="given-name">
+        </div>
+        <div class="form-field">
+          <label for="last-name">Last name</label>
+          <input type="text" id="last-name" placeholder="Al-Hassan" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="form-field">
+        <label for="zip">ZIP code <span style="font-weight: 400; color: var(--muted);">(for shipping estimate)</span></label>
+        <input type="text" id="zip" placeholder="10001" maxlength="10" autocomplete="postal-code">
+      </div>
+      <div class="step-nav">
+        <span class="step-counter">1 / 6</span>
+        <div class="step-nav__btns">
+          <button type="button" class="btn btn--primary next-btn">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Product Types -->
+    <div class="form-step" data-step="2">
+      <div class="form-step__header">
+        <div class="form-step__num">Step 2 of 6</div>
+        <h3>What kinds of things do you love?</h3>
+        <p>Select everything that resonates. Don't overthink it.</p>
+      </div>
+      <div class="form-field">
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" value="textiles" name="product_type"> <span>Textiles &amp; embroidery — scarves, pouches, woven goods</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="ceramics" name="product_type"> <span>Ceramics &amp; home goods — bowls, mugs, handcrafted objects</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="food"     name="product_type"> <span>Food &amp; spices — za'atar, olive oil, dried herbs, small-batch blends</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="jewelry"  name="product_type"> <span>Jewelry &amp; accessories — handmade pieces, natural materials</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="skincare" name="product_type"> <span>Skincare &amp; soap — traditional recipes, natural ingredients</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="art"      name="product_type"> <span>Art &amp; paper goods — prints, calligraphy, illustrated objects</span></label>
+        </div>
+      </div>
+      <div class="step-nav">
+        <span class="step-counter">2 / 6</span>
+        <div class="step-nav__btns">
+          <button type="button" class="btn btn--outline btn--sm prev-btn">← Back</button>
+          <button type="button" class="btn btn--primary next-btn">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Open Description -->
+    <div class="form-step" data-step="3">
+      <div class="form-step__header">
+        <div class="form-step__num">Step 3 of 6</div>
+        <h3>In your own words — what would you love to find in a box?</h3>
+        <p>Be as specific or as general as you want. You can mention colors, styles, feelings, memories, regions, or anything else that comes to mind. This is the most important field in this form.</p>
+      </div>
+      <div class="form-field">
+        <label for="custom-prefs">Describe your ideal box</label>
+        <textarea id="custom-prefs" name="custom_preferences" placeholder="For example: I grew up eating my grandmother's za'atar and I'd love something that connects me to that. I like things that look handmade and not too polished. I'm drawn to Palestine and Lebanon. I want something I'd actually use every day, not just display..."></textarea>
+      </div>
+      <div class="form-field" style="margin-top: 24px;">
+        <label for="avoid">Anything you'd like to avoid?</label>
+        <input type="text" id="avoid" name="avoid" placeholder="e.g. strong fragrances, very fragile items, clothing only...">
+      </div>
+
+      <div class="llm-note">
+        <div class="llm-note__heading">How this field actually works</div>
+        <p>The text you write here is processed by a large language model (LLM) that reads your description and generates a preference profile. It looks for signals like regions you mentioned, types of objects you described, the feeling or aesthetic you're drawn to, and whether your language suggests you want something personal versus functional. That profile is then matched against our artisan database — maker by maker — to rank who fits you best. The more specific and honest your description, the more accurate the match. Vague answers like "I like handmade things" produce a much weaker result than "I want something connected to Palestinian women's craft traditions that I can use in my kitchen." There is no wrong answer, but specificity is rewarded.</p>
+      </div>
+
+      <div class="step-nav">
+        <span class="step-counter">3 / 6</span>
+        <div class="step-nav__btns">
+          <button type="button" class="btn btn--outline btn--sm prev-btn">← Back</button>
+          <button type="button" class="btn btn--primary next-btn">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Sizes -->
+    <div class="form-step" data-step="4">
+      <div class="form-step__header">
+        <div class="form-step__num">Step 4 of 6</div>
+        <h3>If we include wearable items, what size?</h3>
+        <p>We sometimes include scarves, embroidered garments, or accessories. Let us know your preferences so we don't send something that doesn't fit.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Clothing / garment size</label>
+        <div class="size-row">
+          <button type="button" class="size-btn" data-group="clothing">XS</button>
+          <button type="button" class="size-btn" data-group="clothing">S</button>
+          <button type="button" class="size-btn" data-group="clothing">M</button>
+          <button type="button" class="size-btn" data-group="clothing">L</button>
+          <button type="button" class="size-btn" data-group="clothing">XL</button>
+          <button type="button" class="size-btn" data-group="clothing">2XL</button>
+          <button type="button" class="size-btn" data-group="clothing">Skip — no wearables please</button>
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-top: 28px;">
+        <label>Scarf / wrap preference</label>
+        <div class="size-row">
+          <button type="button" class="size-btn" data-group="scarf">Standard (60×60cm)</button>
+          <button type="button" class="size-btn" data-group="scarf">Large wrap (90×200cm)</button>
+          <button type="button" class="size-btn" data-group="scarf">Either is fine</button>
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-top: 28px;">
+        <label for="notes-size">Any other sizing notes?</label>
+        <input type="text" id="notes-size" name="size_notes" placeholder="e.g. I prefer oversized, or my wrists are small for bangles...">
+      </div>
+
+      <div class="step-nav">
+        <span class="step-counter">4 / 6</span>
+        <div class="step-nav__btns">
+          <button type="button" class="btn btn--outline btn--sm prev-btn">← Back</button>
+          <button type="button" class="btn btn--primary next-btn">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Gift? -->
+    <div class="form-step" data-step="5">
+      <div class="form-step__header">
+        <div class="form-step__num">Step 5 of 6</div>
+        <h3>Is this for you, or someone else?</h3>
+        <p>We ask because gift boxes are matched slightly differently — we optimize for presentation and the recipient's preferences over yours.</p>
+      </div>
+
+      <div class="form-field">
+        <label style="margin-bottom: 10px;">This subscription is:</label>
+        <div class="gift-toggle">
+          <input type="radio" name="is_gift" id="for-me" value="no" checked>
+          <label for="for-me">For me</label>
+          <input type="radio" name="is_gift" id="for-gift" value="yes">
+          <label for="for-gift">A gift for someone else</label>
+        </div>
+      </div>
+
+      <div class="gift-fields" id="gift-fields">
+        <div class="form-field">
+          <label for="recipient-name">Recipient's name</label>
+          <input type="text" id="recipient-name" name="recipient_name" placeholder="Their first name is fine">
+        </div>
+        <div class="form-field">
+          <label for="gift-occasion">Occasion</label>
+          <select id="gift-occasion" name="gift_occasion">
+            <option value="">Select one...</option>
+            <option>Eid gift</option>
+            <option>Birthday</option>
+            <option>Wedding / engagement</option>
+            <option>Mother's Day / Father's Day</option>
+            <option>General appreciation</option>
+            <option>No specific occasion</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="gift-prefs">Tell us about the recipient — what they're like, what they care about</label>
+          <textarea id="gift-prefs" name="gift_preferences" style="min-height: 100px;" placeholder="e.g. My mother grew up in Palestine and would love something that connects her to home. She loves cooking and has a warm kitchen..."></textarea>
+        </div>
+        <div class="form-field">
+          <label>
+            <input type="checkbox" name="gift_note" style="width: auto; display: inline; margin-right: 8px;">
+            Include a handwritten gift note (we'll ask for the message in the next step)
+          </label>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <span class="step-counter">5 / 6</span>
+        <div class="step-nav__btns">
+          <button type="button" class="btn btn--outline btn--sm prev-btn">← Back</button>
+          <button type="button" class="btn btn--primary next-btn">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6: Region + Budget -->
+    <div class="form-step" data-step="6">
+      <div class="form-step__header">
+        <div class="form-step__num">Step 6 of 6</div>
+        <h3>Last two things.</h3>
+        <p>Which regions matter most to you, and do you want us to know anything about your budget preferences for the marketplace?</p>
+      </div>
+
+      <div class="form-field">
+        <label>Which regions do you most want to support? <span style="font-weight: 400; color: var(--muted);">(select all that apply)</span></label>
+        <div class="region-checkboxes" style="margin-top: 10px;">
+          <label class="region-check-item"><input type="checkbox" name="region" value="palestine"> <span>🇵🇸 Palestine</span></label>
+          <label class="region-check-item"><input type="checkbox" name="region" value="lebanon">   <span>🇱🇧 Lebanon</span></label>
+          <label class="region-check-item"><input type="checkbox" name="region" value="sudan">     <span>🇸🇩 Sudan</span></label>
+          <label class="region-check-item"><input type="checkbox" name="region" value="iran">      <span>🇮🇷 Iran</span></label>
+          <label class="region-check-item"><input type="checkbox" name="region" value="iraq">      <span>🇮🇶 Iraq</span></label>
+          <label class="region-check-item"><input type="checkbox" name="region" value="no_pref">   <span>No preference — rotate freely</span></label>
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-top: 32px;">
+        <label>For marketplace recommendations, what price range fits? <span style="font-weight: 400; color: var(--muted);">(per item)</span></label>
+        <div class="budget-options" style="margin-top: 10px;">
+          <button type="button" class="budget-btn">Under $25</button>
+          <button type="button" class="budget-btn">$25 – $50</button>
+          <button type="button" class="budget-btn">$50 – $100</button>
+          <button type="button" class="budget-btn">$100+</button>
+          <button type="button" class="budget-btn">No preference</button>
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-top: 32px;">
+        <label for="extra-notes">Anything else you want us to know?</label>
+        <textarea id="extra-notes" name="extra_notes" style="min-height: 90px;" placeholder="Allergies, specific cultural sensitivities, things that are important to you that we didn't ask about..."></textarea>
+      </div>
+
+      <div class="form-submit">
+        <button type="submit" class="btn btn--amber" style="font-size: 1rem; padding: 15px 40px;">Find My Match →</button>
+        <p>By submitting, you agree to receive your first box at $65/month. Cancel any time before your next billing date with no penalty. No dark patterns, no hidden fees.</p>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Match Result (shown after submit) -->
+  <div class="match-result" id="match-result">
+    <div class="match-result__icon">&#9789;</div>
+    <h2>You've been matched.</h2>
+    <p>Based on your profile, we've connected you with this month's featured artisans. Your first box ships within 5 business days.</p>
+    <div class="match-result__artisan">
+      <span class="match-result__artisan-name">Ibrahim Nasser</span>
+      <span class="match-result__artisan-loc">Woodworker &amp; Calligrapher &middot; Bethlehem, Palestine</span>
+    </div>
+    <p>A confirmation email is on its way. Your box includes a kheffiyah, Palestinian bracelet, wooden calligraphy art, a gold Allah coin, and a free solidarity sticker — plus marketplace cards linking to all artisan storefronts.</p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px;">
+      <a href="april-box.html" class="btn btn--amber">Preview Your Box</a>
+      <a href="marketplace.html" class="btn btn--outline-light">Browse the Marketplace</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <h3>☽ Ummah Unboxed</h3>
+        <p>A monthly subscription box and marketplace connecting Muslim artisans in conflict-affected regions directly with consumers in the United States.</p>
+      </div>
+      <div class="footer__col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="april-box.html">April Box — $65</a></li>
+          <li><a href="marketplace.html">Marketplace</a></li>
+          <li><a href="profile.html">Build Your Profile</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Artisans</h4>
+        <ul>
+          <li><a href="https://www.darzah.org" target="_blank">Darzah</a></li>
+          <li><a href="https://canaanpalestine.com" target="_blank">Canaan Palestine</a></li>
+          <li><a href="https://nolcollective.com" target="_blank">Nöl Collective</a></li>
+          <li><a href="https://makersoflebanon.com" target="_blank">Makers of Lebanon</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="marketplace.html">Marketplace</a></li>
+          <li><a href="april-box.html">April Box</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Ummah Unboxed · Team SBC4S</span>
+      <span>Made with intent.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const steps = document.querySelectorAll('.form-step');
+  const progressFill = document.getElementById('progress-fill');
+  const totalSteps = steps.length;
+  let currentStep = 0;
+
+  function showStep(index) {
+    steps.forEach((s, i) => {
+      s.classList.toggle('active', i === index);
+    });
+    progressFill.style.width = ((index + 1) / totalSteps * 100) + '%';
+    window.scrollTo({ top: document.querySelector('.profile-header').offsetTop - 70, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.next-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (currentStep < totalSteps - 1) { currentStep++; showStep(currentStep); }
+    });
+  });
+
+  document.querySelectorAll('.prev-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (currentStep > 0) { currentStep--; showStep(currentStep); }
+    });
+  });
+
+  // Size buttons
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.group;
+      document.querySelectorAll(`.size-btn[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  // Budget buttons
+  document.querySelectorAll('.budget-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  // Gift toggle
+  document.querySelectorAll('input[name="is_gift"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const giftFields = document.getElementById('gift-fields');
+      if (radio.value === 'yes' && radio.checked) {
+        giftFields.classList.add('visible');
+      } else {
+        giftFields.classList.remove('visible');
+      }
+    });
+  });
+
+  // Form submit
+  document.getElementById('profile-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('profile-form').style.display = 'none';
+    const result = document.getElementById('match-result');
+    result.classList.add('visible');
+    window.scrollTo({ top: result.offsetTop - 100, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>

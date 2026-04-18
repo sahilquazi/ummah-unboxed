@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ummah Unboxed — Artisan Subscription Boxes from Muslim-Majority Regions</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .region-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .region-pill {
+      font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 12px; border: 1px solid rgba(247,240,226,0.35); color: rgba(247,240,226,0.65);
+      font-weight: 500;
+    }
+    .two-col-feature {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
+      border: 1px solid var(--border); margin-top: 48px;
+    }
+    .two-col-feature__img { aspect-ratio: 4/3; overflow: hidden; }
+    .two-col-feature__img img { width: 100%; height: 100%; object-fit: cover; }
+    .two-col-feature__body {
+      padding: 52px 48px; background: var(--cream); display: flex;
+      flex-direction: column; justify-content: center;
+    }
+    .two-col-feature__body .label { margin-bottom: 10px; }
+    .two-col-feature__body h2 { margin-bottom: 16px; }
+    .two-col-feature__body p  { color: var(--muted); margin-bottom: 20px; line-height: 1.7; }
+    .two-col-feature__price-box {
+      background: var(--deep-green); color: var(--cream); padding: 28px 32px; margin-top: 32px;
+    }
+    .two-col-feature__price-box .price-big {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-size: 3rem;
+      font-weight: 700; color: var(--wheat); line-height: 1;
+    }
+    .two-col-feature__price-box p { color: rgba(247,240,226,0.65); font-size: 0.85rem; margin-top: 4px; margin-bottom: 20px; }
+    .story-pull {
+      background: var(--deep-green); padding: 6px 16px;
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--wheat); font-weight: 500; display: inline-block; margin-bottom: 16px;
+    }
+    .impact-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      border: 1px solid var(--border); margin-top: 48px;
+    }
+    .impact-box {
+      padding: 32px; text-align: center; border-right: 1px solid var(--border);
+    }
+    .impact-box:last-child { border-right: none; }
+    .impact-box__num {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.6rem; font-weight: 700; color: var(--deep-green); display: block; line-height: 1;
+    }
+    .impact-box__label { font-size: 0.78rem; color: var(--muted); margin-top: 6px; letter-spacing: 0.04em; }
+    @media (max-width: 768px) {
+      .two-col-feature { grid-template-columns: 1fr; }
+      .impact-row { grid-template-columns: 1fr 1fr; }
+      .impact-box { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+    @media (max-width: 480px) { .impact-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- Announcement Bar -->
+<div class="announce-bar">
+  April box is live — <em>From Palestine, With Soul</em>. Ships through April 28.&nbsp;
+  <a href="april-box.html">See what's inside &rarr;</a>
+</div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__logo">
+      <span class="star">&#9789;</span> Ummah Unboxed
+    </a>
+    <div class="nav__links">
+      <a href="index.html" class="active">Home</a>
+      <a href="april-box.html">April Box</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="profile.html" class="nav__cta">Build Your Profile</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero__bg" style="background-image: url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1800&q=80');"></div>
+  <div class="hero__content">
+    <span class="hero__tag">Artisan Subscription Boxes</span>
+    <h1 class="hero__headline">Every box tells a story<br><em>that needs to be heard.</em></h1>
+    <p class="hero__sub">Monthly handcrafted goods from Palestinian, Lebanese, and Sudanese artisans — delivered to your door, with the story of who made them.</p>
+    <div class="hero__actions">
+      <a href="profile.html" class="btn btn--amber">Start Your Subscription</a>
+      <a href="april-box.html" class="btn btn--outline-light">See April's Box</a>
+    </div>
+    <div class="region-pills">
+      <span class="region-pill">Palestine</span>
+      <span class="region-pill">Lebanon</span>
+      <span class="region-pill">Sudan</span>
+      <span class="region-pill">Iran</span>
+      <span class="region-pill">Iraq</span>
+    </div>
+  </div>
+</section>
+
+<!-- April Box Feature -->
+<section class="section" style="background: var(--light-cream);">
+  <div class="container">
+    <div class="two-col-feature">
+      <div class="two-col-feature__img">
+        <img src="april-box-photo.jpeg" alt="April 2026 box contents — keffiyeh, wooden calligraphy, gold coin">
+      </div>
+      <div class="two-col-feature__body">
+        <span class="label">Featured — April 2026</span>
+        <h2>From Palestine,<br>With Soul</h2>
+        <p>This month we're spotlighting Palestinian artisans across the West Bank. Inside: a traditional kheffiyah woven in Hebron, a handmade Palestinian bracelet, hand-burned wooden Arabic calligraphy artwork from Bethlehem, a gold Allah coin, and a free Palestinian solidarity sticker.</p>
+        <p style="font-size: 0.875rem; color: var(--muted);">Every subscriber receives direct links to each artisan's storefront — so the relationship doesn't end at the doorstep.</p>
+        <div class="two-col-feature__price-box">
+          <span class="price-big">$65</span>
+          <p>Monthly subscription &middot; Cancel any time &middot; Free US shipping</p>
+          <a href="april-box.html" class="btn btn--amber">See What's Inside</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- How It Works -->
+<section class="section how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">The Process</span>
+      <h2>Straightforward by design.</h2>
+      <p>No mystery boxes. You tell us what matters to you, we match you with an artisan whose work fits — and connect you to them directly.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step__num">01</div>
+        <h4>Build your profile</h4>
+        <p>Answer a short preference quiz — what you love, what regions you want to support, whether it's a gift. The more specific you are, the better your match.</p>
+      </div>
+      <div class="step">
+        <div class="step__num">02</div>
+        <h4>Get matched</h4>
+        <p>Our matching system reads your preferences and pairs you with an artisan whose craft, region, and style align with what you described. You can see who you're supporting before it ships.</p>
+      </div>
+      <div class="step">
+        <div class="step__num">03</div>
+        <h4>Receive — then keep going</h4>
+        <p>Your box arrives with the product, a handwritten letter from the maker, and a card linking to their marketplace storefront. The relationship doesn't stop at one box.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Mission Section -->
+<section class="mission-strip">
+  <div class="container">
+    <div class="mission-strip__inner">
+      <div class="mission-strip__text">
+        <span class="label" style="color: var(--wheat); opacity: 0.6;">What This Is Really About</span>
+        <h2>These businesses didn't lose the ability to make things. They lost access to buyers.</h2>
+        <p>In Sudan, Palestine, Lebanon, and Iran, skilled craftspeople are still producing hand-woven keffiyehs, carved wooden art, embroidered textiles, and handcrafted jewelry. Wartime economics wipe out local demand — not skill.</p>
+        <p>Ummah Unboxed gives them a direct channel to US consumers. We take a small service fee from box sales and run the marketplace on minimal commission so artisans keep as much of their revenue as possible.</p>
+        <a href="marketplace.html" class="btn btn--outline-light" style="margin-top: 8px;">Browse the Marketplace</a>
+      </div>
+      <div class="mission-strip__img">
+        <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80" alt="Artisan spice market">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Impact Numbers -->
+<section class="section--sm" style="background: var(--light-cream);">
+  <div class="container">
+    <div class="impact-row">
+      <div class="impact-box">
+        <span class="impact-box__num">4</span>
+        <div class="impact-box__label">Regions served</div>
+      </div>
+      <div class="impact-box">
+        <span class="impact-box__num">18+</span>
+        <div class="impact-box__label">Artisan storefronts</div>
+      </div>
+      <div class="impact-box">
+        <span class="impact-box__num">~85%</span>
+        <div class="impact-box__label">Revenue to artisans</div>
+      </div>
+      <div class="impact-box">
+        <span class="impact-box__num">$0</span>
+        <div class="impact-box__label">Extra cost to keep shopping directly</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Featured Artisan Spotlight -->
+<section class="section" style="background: var(--cream);">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">April's Featured Maker</span>
+      <h2>Ibrahim Nasser — Bethlehem, Palestine</h2>
+    </div>
+    <div class="artisan-spot">
+      <div class="artisan-spot__img">
+        <img src="april-box-photo.jpeg" alt="Handmade wooden Arabic calligraphy artwork from Bethlehem">
+      </div>
+      <div class="artisan-spot__body">
+        <span class="artisan-spot__region">Palestine &middot; Bethlehem &middot; Woodwork &amp; Calligraphy</span>
+        <h2>He learned to carve wood before he learned to write. Now he does both at once.</h2>
+        <p>Ibrahim has been creating hand-burned Arabic calligraphy artwork in his Bethlehem workshop since he was a teenager. Each piece features freehand calligraphy intertwined with floral motifs — burned into oak with a heated stylus. No machines, no stencils. His work turns prayers into art you can hang on your wall and touch with your hands.</p>
+        <blockquote>"When I burn these words into wood, I am putting something permanent into the world. Paper burns. Wood endures."</blockquote>
+        <p>This month's box includes his hand-burned calligraphy artwork — approximately 6 hours of work per piece. No two are identical.</p>
+        <div class="artisan-spot__actions">
+          <a href="april-box.html" class="btn btn--primary">Get This Month's Box — $65</a>
+          <a href="marketplace.html" class="btn btn--outline">Browse the Marketplace</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Marketplace Preview -->
+<section class="section" style="background: var(--light-cream);">
+  <div class="container">
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 0;">
+      <div>
+        <span class="label">From the Marketplace</span>
+        <h2>Shop directly from the makers.</h2>
+        <p style="margin-top: 8px;">Every product here links back to the artisan's own storefront. We facilitate; they profit.</p>
+      </div>
+      <a href="marketplace.html" class="btn btn--outline" style="white-space: nowrap;">See All Products</a>
+    </div>
+
+    <div class="product-grid" style="margin-top: 40px;">
+
+      <!-- Product 1 - Keffiyeh -->
+      <div class="product-card">
+        <div class="product-card__img">
+          <img src="https://images.unsplash.com/photo-1583394293214-0b3b6a9b5fcc?auto=format&fit=crop&w=600&q=80" alt="Traditional Palestinian keffiyeh">
+        </div>
+        <div class="product-card__body">
+          <span class="product-card__from">Handmade Palestine &middot; Hebron</span>
+          <div class="product-card__name">Traditional Keffiyeh &mdash; Black &amp; White</div>
+          <p class="product-card__desc">Woven on one of the last remaining mechanical looms in Palestine. A symbol of resistance and identity — now a vehicle for artisan income. Comes with a story card.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$45</span>
+            <a href="https://handmadepalestine.com" target="_blank" class="product-card__link">Visit Handmade Palestine &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 - Bracelet -->
+      <div class="product-card">
+        <div class="product-card__img">
+          <img src="https://images.unsplash.com/photo-1611085583191-a3b181a88401?auto=format&fit=crop&w=600&q=80" alt="Handmade Palestinian bracelet">
+        </div>
+        <div class="product-card__body">
+          <span class="product-card__from">Darzah &middot; West Bank</span>
+          <div class="product-card__name">Handmade Palestinian Bracelet</div>
+          <p class="product-card__desc">Handcrafted by women artisans in Ramallah and Bethlehem. Features Palestinian flag colors woven with traditional beading techniques. Each piece is unique.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$22</span>
+            <a href="https://www.darzah.org" target="_blank" class="product-card__link">Visit Darzah &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 - Wooden Art -->
+      <div class="product-card">
+        <div class="product-card__img">
+          <img src="april-box-photo.jpeg" alt="Handmade wooden Arabic calligraphy artwork" style="object-position: top;">
+        </div>
+        <div class="product-card__body">
+          <span class="product-card__from">Handmade Palestine &middot; Bethlehem</span>
+          <div class="product-card__name">Wooden Arabic Calligraphy Art</div>
+          <p class="product-card__desc">Hand-burned Arabic calligraphy on natural oak with floral motifs. Made by a woodworker in Bethlehem. Each piece takes ~6 hours. No two are alike.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$55</span>
+            <a href="https://handmadepalestine.com" target="_blank" class="product-card__link">Visit Handmade Palestine &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4 - Olive Oil -->
+      <div class="product-card">
+        <div class="product-card__img">
+          <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80" alt="Palestinian extra virgin olive oil">
+        </div>
+        <div class="product-card__body">
+          <span class="product-card__from">Canaan Palestine &middot; Jenin</span>
+          <div class="product-card__name">Extra Virgin Olive Oil (500ml)</div>
+          <p class="product-card__desc">Single-origin, organic, cold-pressed. From olive trees that are hundreds of years old — some of the oldest in the world. Shipped directly from Jenin.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$22</span>
+            <a href="https://canaanpalestine.com" target="_blank" class="product-card__link">Visit Canaan &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 5 - Za'atar -->
+      <div class="product-card">
+        <div class="product-card__img">
+          <img src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80" alt="Za'atar spice blend">
+        </div>
+        <div class="product-card__body">
+          <span class="product-card__from">Canaan Palestine &middot; Jenin</span>
+          <div class="product-card__name">Za'atar Signature Blend</div>
+          <p class="product-card__desc">Wild thyme, sesame, sumac — blended by women cooperatives in Jenin. Certified fair trade. Sourced from family farms across the West Bank.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$14</span>
+            <a href="https://canaanpalestine.com" target="_blank" class="product-card__link">Visit Canaan &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 6 - Soap -->
+      <div class="product-card">
+        <div class="product-card__img">
+          <img src="https://images.unsplash.com/photo-1540202403-b7abd6a9f0c4?auto=format&fit=crop&w=600&q=80" alt="Lebanese artisan soap set">
+        </div>
+        <div class="product-card__body">
+          <span class="product-card__from">Makers of Lebanon &middot; Beirut</span>
+          <div class="product-card__name">Saboun Baladi Soap Set</div>
+          <p class="product-card__desc">Traditional Lebanese cold-process soap made with olive oil and laurel berry oil. A recipe passed down for over 90 years — now made by one family workshop in Beirut.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$28</span>
+            <a href="https://makersoflebanon.com" target="_blank" class="product-card__link">Visit Makers of Lebanon &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Pull Quote -->
+<div class="quote-strip">
+  <blockquote>"Whoever alleviates the hardship of someone in distress, Allah will alleviate his hardship in the hereafter."</blockquote>
+  <cite>&mdash; Sahih al-Bukhari &middot; The principle behind every box we ship</cite>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <h3>&#9789; Ummah Unboxed</h3>
+        <p>A monthly subscription box and marketplace connecting Muslim artisans in conflict-affected regions directly with consumers in the United States.</p>
+      </div>
+      <div class="footer__col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="april-box.html">April Box &mdash; $65</a></li>
+          <li><a href="marketplace.html">Marketplace</a></li>
+          <li><a href="profile.html">Build Your Profile</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Artisans</h4>
+        <ul>
+          <li><a href="https://handmadepalestine.com" target="_blank">Handmade Palestine</a></li>
+          <li><a href="https://www.darzah.org" target="_blank">Darzah</a></li>
+          <li><a href="https://canaanpalestine.com" target="_blank">Canaan Palestine</a></li>
+          <li><a href="https://nolcollective.com" target="_blank">N&ouml;l Collective</a></li>
+          <li><a href="https://makersoflebanon.com" target="_blank">Makers of Lebanon</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="marketplace.html">Marketplace</a></li>
+          <li><a href="profile.html">Build Your Profile</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>&copy; 2026 Ummah Unboxed &middot; Team SBC4S</span>
+      <span>Made with intent.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.size-row').querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+</script>
+
+</body>
+</html>
